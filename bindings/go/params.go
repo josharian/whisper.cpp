@@ -128,6 +128,10 @@ func (p *Params) SetInitialPrompt(prompt string) {
 	p.initial_prompt = C.CString(prompt)
 }
 
+func (p *Params) SetBeamSize(n int) {
+	p.beam_search.beam_size = C.int(n)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS
 

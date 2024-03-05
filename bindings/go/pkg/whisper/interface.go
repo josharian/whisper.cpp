@@ -21,8 +21,11 @@ type ProgressCallback func(int)
 type Model interface {
 	io.Closer
 
-	// Return a new speech-to-text context.
+	// Return a new speech-to-text context with greedy search.
 	NewContext() (Context, error)
+
+	// Return a new speech-to-text context with beam search.
+	NewContextWithBeamSearch() (Context, error)
 
 	// Return true if the model is multilingual.
 	IsMultilingual() bool
@@ -50,6 +53,7 @@ type Context interface {
 	SetMaxTokensPerSegment(uint)    // Set max tokens per segment (0 = no limit)
 	SetAudioCtx(uint)               // Set audio encoder context
 	SetInitialPrompt(prompt string) // Set initial prompt
+	SetBeamSize(n int)              // Set beam size, no-op if not using beam search
 
 	// Process mono audio data and return any errors.
 	// If defined, newly generated segments are passed to the

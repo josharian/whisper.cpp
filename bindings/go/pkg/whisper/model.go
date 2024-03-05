@@ -82,12 +82,20 @@ func (model *model) Languages() []string {
 }
 
 func (model *model) NewContext() (Context, error) {
+	return model.newContextWithStrategy(whisper.SAMPLING_GREEDY)
+}
+
+func (model *model) NewContextWithBeamSearch() (Context, error) {
+	return model.newContextWithStrategy(whisper.SAMPLING_BEAM_SEARCH)
+}
+
+func (model *model) newContextWithStrategy(samplingStrategy whisper.SamplingStrategy) (Context, error) {
 	if model.ctx == nil {
 		return nil, ErrInternalAppError
 	}
 
 	// Create new context
-	params := model.ctx.Whisper_full_default_params(whisper.SAMPLING_GREEDY)
+	params := model.ctx.Whisper_full_default_params(samplingStrategy)
 	params.SetTranslate(false)
 	params.SetPrintSpecial(false)
 	params.SetPrintProgress(false)

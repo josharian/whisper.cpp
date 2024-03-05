@@ -135,6 +135,11 @@ func (context *context) SetInitialPrompt(prompt string) {
 	context.params.SetInitialPrompt(prompt)
 }
 
+// Set beam size, no-op if not using beam search
+func (context *context) SetBeamSize(n int) {
+	context.params.SetBeamSize(n)
+}
+
 // ResetTimings resets the mode timings. Should be called before processing
 func (context *context) ResetTimings() {
 	context.model.ctx.Whisper_reset_timings()

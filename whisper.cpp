@@ -4813,6 +4813,15 @@ static void whisper_process_logits(
             }
         }
 
+        // suppress tokens containing numbers
+        static const std::string numbery = "0123456789%$£";
+        for (int i = 0; i < vocab.token_beg; i++) {
+            const std::string & token = vocab.id_to_token.at(i);
+            if (token.find_first_of(numbery) != std::string::npos) {
+                logits[i] = -INFINITY;
+            }
+        }
+
         // timestamps have to appear in pairs, except directly before EOT; mask logits accordingly
         // https://github.com/openai/whisper/blob/0b1ba3d46ebf7fe6f953acfd8cad62a4f851b49f/whisper/decoding.py#L414-L424
         {

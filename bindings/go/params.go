@@ -47,6 +47,10 @@ func (p *Params) SetPrintTimestamps(v bool) {
 	p.print_timestamps = toBool(v)
 }
 
+func (p *Params) SetNoTimestamps(v bool) {
+	p.no_timestamps = toBool(v)
+}
+
 func (p *Params) SetSpeedup(v bool) {
 	p.speed_up = toBool(v)
 }

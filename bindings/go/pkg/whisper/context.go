@@ -120,6 +120,10 @@ func (context *context) SetTokenTimestamps(b bool) {
 	context.params.SetTokenTimestamps(b)
 }
 
+func (context *context) SetGenerateTimestamps(b bool) {
+	context.params.SetNoTimestamps(!b)
+}
+
 // Set max tokens per segment (0 = no limit)
 func (context *context) SetMaxTokensPerSegment(n uint) {
 	context.params.SetMaxTokensPerSegment(int(n))

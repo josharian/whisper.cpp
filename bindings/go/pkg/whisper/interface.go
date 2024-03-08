@@ -50,6 +50,7 @@ type Context interface {
 	SetTokenSumThreshold(float32)   // Set timestamp token sum probability threshold
 	SetMaxSegmentLength(uint)       // Set max segment length in characters
 	SetTokenTimestamps(bool)        // Set token timestamps flag
+	SetGenerateTimestamps(bool)     // If false, disables all timestamps
 	SetMaxTokensPerSegment(uint)    // Set max tokens per segment (0 = no limit)
 	SetAudioCtx(uint)               // Set audio encoder context
 	SetInitialPrompt(prompt string) // Set initial prompt

@@ -149,7 +149,7 @@ static void whisper_log_callback_default(ggml_log_level level, const char * text
 
 //#define WHISPER_USE_FLASH_ATTN
 //#define WHISPER_USE_FLASH_FF
-#define WHISPER_MAX_DECODERS 8
+#define WHISPER_MAX_DECODERS 16
 #define WHISPER_MAX_NODES 4096
 
 //
@@ -3180,7 +3180,7 @@ struct whisper_state * whisper_init_state(whisper_context * ctx) {
 
     // at this point, we don't know yet how many decoders will be used, so we overallocate 3x ctx
     // in theory, there can be a case where this is not enough, but in practice it should always be enough
-    const int factor = 3;
+    const int factor = 8;
 
     if (!kv_cache_init(ctx->model.hparams, state->kv_self, ctx->backend, ctx->itype, factor*ctx->model.hparams.n_text_ctx)) {
         WHISPER_LOG_ERROR("%s: kv_cache_init() failed for self-attention cache\n", __func__);

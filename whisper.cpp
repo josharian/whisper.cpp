@@ -403,6 +403,7 @@ struct whisper_vocab {
 
     std::map<token, id> token_to_id;
     std::map<id, token> id_to_token;
+    std::vector<id> numbery_token_ids;
 
     // reference: https://github.com/openai/whisper/blob/248b6cb124225dd263bb9bd32d060b6517e067f8/whisper/tokenizer.py#L334-L349
     id token_eot        = 50256;
@@ -3246,6 +3247,15 @@ struct whisper_state * whisper_init_state(whisper_context * ctx) {
 
     state->decoders[0].rng = std::mt19937(0);
 
+    // init list of number-y tokens
+    static const std::string numbery = "0123456789%$£";
+    for (int i = 0; i < ctx->vocab.token_beg; i++) {
+        const std::string & token = ctx->vocab.id_to_token.at(i);
+        if (token.find_first_of(numbery) != std::string::npos) {
+            ctx->vocab.numbery_token_ids.push_back(i);
+        }
+    }
+
     // conv allocator
     {
         bool ok = whisper_allocr_graph_init(state->alloc_conv, ctx->backend,
@@ -4814,12 +4824,8 @@ static void whisper_process_logits(
         }
 
         // suppress tokens containing numbers
-        static const std::string numbery = "0123456789%$£";
-        for (int i = 0; i < vocab.token_beg; i++) {
-            const std::string & token = vocab.id_to_token.at(i);
-            if (token.find_first_of(numbery) != std::string::npos) {
-                logits[i] = -INFINITY;
-            }
+        for (const auto & id : vocab.numbery_token_ids) {
+            logits[id] = -INFINITY;
         }
 
         // timestamps have to appear in pairs, except directly before EOT; mask logits accordingly

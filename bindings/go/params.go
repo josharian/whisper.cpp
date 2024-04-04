@@ -136,6 +136,14 @@ func (p *Params) SetBeamSize(n int) {
 	p.beam_search.beam_size = C.int(n)
 }
 
+func (p *Params) SetTemperature(t float32) {
+	p.temperature = C.float(t)
+}
+
+func (p *Params) SetTemperatureInc(t float32) {
+	p.temperature_inc = C.float(t)
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS
 

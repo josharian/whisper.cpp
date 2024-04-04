@@ -144,6 +144,14 @@ func (context *context) SetBeamSize(n int) {
 	context.params.SetBeamSize(n)
 }
 
+func (context *context) SetTemperature(t float32) {
+	context.params.SetTemperature(t)
+}
+
+func (context *context) SetTemperatureInc(t float32) {
+	context.params.SetTemperatureInc(t)
+}
+
 // ResetTimings resets the mode timings. Should be called before processing
 func (context *context) ResetTimings() {
 	context.model.ctx.Whisper_reset_timings()

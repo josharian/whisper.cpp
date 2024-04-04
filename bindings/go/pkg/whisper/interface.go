@@ -55,6 +55,8 @@ type Context interface {
 	SetAudioCtx(uint)               // Set audio encoder context
 	SetInitialPrompt(prompt string) // Set initial prompt
 	SetBeamSize(n int)              // Set beam size, no-op if not using beam search
+	SetTemperature(t float32)       // Set initial temperature, default is 0.0
+	SetTemperatureInc(t float32)    // Set initial temperature increment on failure
 
 	// Process mono audio data and return any errors.
 	// If defined, newly generated segments are passed to the

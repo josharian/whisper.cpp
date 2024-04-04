@@ -418,6 +418,11 @@ struct whisper_vocab {
     id token_not        = 50362; // no timestamps
     id token_beg        = 50363; // begin timestamps
 
+    id token_um = 449; // um
+    id token_cap_um = 40937; // Um
+    id token_uh = 3232; // uh
+    id token_cap_uh = 27727; // Uh
+
     bool is_multilingual() const {
         return n_vocab >= 51865;
     }
@@ -3248,7 +3253,7 @@ struct whisper_state * whisper_init_state(whisper_context * ctx) {
     state->decoders[0].rng = std::mt19937(0);
 
     // init list of number-y tokens
-    static const std::string numbery = "0123456789%$£";
+    static const std::string numbery = "0123456789%$£,?!.->";
     for (int i = 0; i < ctx->vocab.token_beg; i++) {
         const std::string & token = ctx->vocab.id_to_token.at(i);
         if (token.find_first_of(numbery) != std::string::npos) {
@@ -4828,6 +4833,13 @@ static void whisper_process_logits(
             logits[id] = -INFINITY;
         }
 
+        // boost "um" and "uh" tokens
+        logits[vocab.token_um] += 1.0f;
+        logits[vocab.token_uh] += 1.0f;
+        logits[vocab.token_cap_um] += 1.0f;
+        logits[vocab.token_cap_uh] += 1.0f;
+
+
         // timestamps have to appear in pairs, except directly before EOT; mask logits accordingly
         // https://github.com/openai/whisper/blob/0b1ba3d46ebf7fe6f953acfd8cad62a4f851b49f/whisper/decoding.py#L414-L424
         {
@@ -5870,6 +5882,16 @@ int whisper_full_with_state(
                     if (decoder.failed) {
                         continue;
                     }
+
+                    // print the sequence, as text
+                    auto tokens_cur = decoder.sequence.tokens;
+                    std::string text;
+                    for (int k = 0; k < (int) tokens_cur.size(); k++) {
+                        if (tokens_cur[k].id < whisper_token_eot(ctx)) {
+                            text += whisper_token_to_str(ctx, tokens_cur[k].id);
+                        }
+                    }
+                    // printf("%d: %s\n", j, text.c_str());
 
                     decoder.sequence.tokens.resize(decoder.sequence.result_len);
                     whisper_sequence_score(params, decoder.sequence);
